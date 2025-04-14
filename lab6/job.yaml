@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: copy-sample-content
+spec:
+  template:
+    spec:
+      containers:
+        - name: copy-content
+          image: busybox
+          command: ["/bin/sh", "-c", "echo '<html><body><h1>Hello from NFS on minikube!</h1></body></html>' > /mnt/nfs/index.html"]
+          volumeMounts:
+            - name: lscvolume
+              mountPath: /mnt/nfs
+      restartPolicy: OnFailure
+      volumes:
+        - name: lscvolume
+          persistentVolumeClaim:
+            claimName: lscpvc
+  backoffLimit: 4
